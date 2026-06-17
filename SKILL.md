@@ -1,6 +1,17 @@
 ---
 name: videounderstand
-description: Turn local tutorial videos or screen-recording videos (.webm, .mp4, .mkv, .mov, etc.) into structured understanding artifacts such as image-text workflows, operating manuals, DOCX/PDF handbooks, step-by-step summaries, timestamped notes, and screenshot-based guides. Use when the user asks Codex to watch/analyze a video file, extract key frames, organize a tutorial into pictures and text, create a desktop PDF/DOCX manual, or clean temporary video-understanding work files afterward.
+description: >
+  Turn local tutorial videos or screen-recording videos (.webm, .mp4, .mkv, .mov, etc.)
+  into structured understanding artifacts such as image-text workflows, operating manuals,
+  DOCX/PDF handbooks, step-by-step summaries, timestamped notes, and screenshot-based guides.
+  Use when the user asks to watch/analyze a video file, extract key frames, organize a tutorial
+  into pictures and text, create a desktop PDF/DOCX manual, or clean temporary video-understanding
+  work files afterward.
+negative_triggers:
+  - Do NOT use for downloading online videos (YouTube, Bilibili, etc.)
+  - Do NOT use for copyright-protected content extraction without permission
+  - Do NOT use for audio-only transcription without visual frames
+  - Do NOT use for real-time video streaming analysis
 ---
 
 # Videounderstand
@@ -70,8 +81,10 @@ Use this skill to convert a local tutorial video into a verified, screenshot-bac
 Use `scripts/prepare_video_understanding.py` for the repeatable extraction stage:
 
 ```powershell
-python C:\Users\32694\.codex\skills\videounderstand\scripts\prepare_video_understanding.py `
-  "E:\youtube\example.webm" `
+# 将 SKILL_DIR 替换为本 Skill 所在目录的实际路径
+# 例如: C:\Users\你的用户名\.claude\skills\videounderstand
+python "<SKILL_DIR>/scripts/prepare_video_understanding.py" `
+  "path/to/your/video.webm" `
   --work-dir ".\work_example" `
   --interval 10 `
   --scene-threshold 0.32 `
@@ -92,15 +105,23 @@ The script creates:
 Use `scripts/verify_manual_deliverables.py` after creating final files:
 
 ```powershell
-python C:\Users\32694\.codex\skills\videounderstand\scripts\verify_manual_deliverables.py `
-  --docx "C:\Users\me\Desktop\manual.docx" `
-  --pdf "C:\Users\me\Desktop\manual.pdf" `
-  --keywords "Codex,provider,备份,恢复"
+python "<SKILL_DIR>/scripts/verify_manual_deliverables.py" `
+  --docx "path/to/manual.docx" `
+  --pdf "path/to/manual.pdf" `
+  --keywords "关键词1,关键词2"
 ```
 
 On Windows consoles with Chinese keyword encoding issues, write one keyword per line to a UTF-8 file and pass `--keywords-file`.
 
 Read `references/manual-patterns.md` when writing a tutorial handbook or deciding what sections to include.
+
+## Safety Boundaries
+
+- Never delete the source video unless explicitly requested.
+- Never upload video content to external services without user consent.
+- Temporary files (frames, contact sheets, scripts) are created in a scratch directory and cleaned up after delivery.
+- Final deliverables are placed at the user-specified destination (default: desktop).
+- If ffmpeg is missing, stop and report clearly—do not attempt silent fallbacks.
 
 ## Quality Rules
 
