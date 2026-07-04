@@ -105,6 +105,6 @@ python scripts/scan.py /path/to/your/project --scan-history
 - gh CLI（`winget install GitHub.cli`）
 - gh 已登录（`gh auth login`）
 
-## License
+## 许可证
 
 [MIT](LICENSE)
