@@ -1,11 +1,13 @@
-# ⏰ /later — Claude Code 的闹钟
+![/later - Claude Code 的闹钟](./cover.png)
+
+# ⏰ /later - Claude Code 的闹钟
 
 ![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)
 ![Claude Code Skill](https://img.shields.io/badge/Claude%20Code-Skill-blueviolet)
 ![One-shot](https://img.shields.io/badge/trigger-one--shot-orange)
 ![No loop](https://img.shields.io/badge/no--loop-no--wait-green)
 
-> 告诉 Claude「N 小时后帮我做某事」——到点自动跑一次，跑完销毁。
+> 告诉 Claude「N 小时后帮我做某事」--到点自动跑一次，跑完销毁。
 >
 > A one-shot alarm for Claude Code: schedule a task N hours ahead, it runs once at the scheduled time, then self-destructs.
 
@@ -33,7 +35,7 @@ Claude   ⏰ 闹钟已定
 
 让你离开电脑后，Claude 在到点时替你把活干了。
 
-- 🌙 **睡前定一个**：「6 小时后检查昨晚的构建是不是过了，红测列给我」——睡醒直接看结果
+- 🌙 **睡前定一个**：「6 小时后检查昨晚的构建是不是过了，红测列给我」--睡醒直接看结果
 - 🚀 **跑长任务时**：「30 分钟后看看 dist 里的 exe 是不是还是旧的」
 - 📅 **过几天再查**：「2 天后看看那个 PR 合了没」
 - 🤖 **统一入口**：所有「过段时间再让 Claude 做某事」的需求，一行说完，不用去凑 `/loop`
@@ -90,8 +92,8 @@ git clone https://github.com/wh520-wh/later-skill ~/.claude/skills/later
 
 **中途管理**：
 
-- 问「定了哪些」→ 列出所有闹钟
-- 说「取消那个」→ 删掉指定闹钟
+- 问「定了哪些」-> 列出所有闹钟
+- 说「取消那个」-> 删掉指定闹钟
 
 ---
 
@@ -110,7 +112,7 @@ git clone https://github.com/wh520-wh/later-skill ~/.claude/skills/later
 
 ## 它是怎么工作的
 
-基于 Claude Code CLI 自带的 cron 机制（一次性、session-only）。到点会触发一个**全新的对话轮**，执行你给的指令——所以指令必须自带一切（文件路径、对照依据、要做什么），现在的上下文到点早不在了。
+基于 Claude Code CLI 自带的 cron 机制（一次性、session-only）。到点会触发一个**全新的对话轮**，执行你给的指令--所以指令必须自带一切（文件路径、对照依据、要做什么），现在的上下文到点早不在了。
 
 不依赖外部服务，不常驻进程，轻量到整个 skill 就一个文件。
 
