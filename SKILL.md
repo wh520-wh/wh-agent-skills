@@ -128,14 +128,16 @@ git fetch origin      # 同步远端
 调用 `scripts/scan.py`（位于 `~/.claude/skills/Togithub/scripts/scan.py`）：
 
 ```bash
-# 文件扫描（必跑）
-python "$HOME/.claude/skills/Togithub/scripts/scan.py" .
+# 文件扫描（必跑）。人类可读输出：统计先行 + danger/warn 逐条 + info 聚合
+python "$HOME/.claude/skills/Togithub/scripts/scan.py" . --human
 
 # 历史扫描（状态 B/C 必跑——能查出旧 commit 里的密钥、Co-Authored-By 等）
-python "$HOME/.claude/skills/Togithub/scripts/scan.py" . --scan-history --max-commits 200
+python "$HOME/.claude/skills/Togithub/scripts/scan.py" . --human --scan-history --max-commits 200
 ```
 
-文件扫描会扫四类问题，历史扫描会扫 `git log -p` 里所有被添加/修改的行。两者结果合并后再向用户报告。
+**扫描范围 = 将推送的内容**：默认用 `git ls-files` 取「已跟踪 + 未忽略未跟踪」文件，.gitignore 忽略的目录（node_modules、dist、.demo_runs 等）**根本不被遍历**——大仓库几秒扫完，也不会报"永远不会推送的文件"的噪音。输出末尾一行提示跳过了多少项。非 git 仓库自动回退内置忽略表。需要全量扫描时加 `--no-ignore`。
+
+文件扫描会扫四类问题，历史扫描会扫 `git log -p` 里所有被添加/修改的行。两者结果合并后再向用户报告。误报防线：银行卡号需过 Luhn 校验（浮点数/长数字串不再误报）；api-key 的值必须是带引号字符串或 `sk-`/`AKIA`/`ghp_`/`eyJ` 前缀（`extractStreamToken(event)` 这类变量名不报）。
 
 1. **AI 痕迹文件**（建议删除）
    - `.claude/` 目录

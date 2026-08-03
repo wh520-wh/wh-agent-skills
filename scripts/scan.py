@@ -172,6 +172,51 @@ def _is_safe_private_ip(ip_str: str) -> bool:
     return ip_str in SAFE_PRIVATE_IPS
 
 
+def _luhn_valid(digits: str) -> bool:
+    """Luhn checksum validation. Real card numbers always pass; random
+    digit strings mostly fail. Returns True only for a valid card number."""
+    if not digits.isdigit():
+        return False
+    total = 0
+    for i, ch in enumerate(reversed(digits)):
+        d = int(ch)
+        if i % 2 == 1:
+            d *= 2
+            if d > 9:
+                d -= 9
+        total += d
+    return total % 10 == 0
+
+
+def git_scan_list(root: Path) -> tuple[list[str], int] | None:
+    """Return (relative paths that would be pushed, count of git-ignored paths).
+
+    Uses `git ls-files --cached --others --exclude-standard` — the exact set
+    of tracked + untracked-not-ignored files, i.e. what `git add -A` would
+    stage. Git-ignored dirs (node_modules, .demo_runs, ...) are never walked,
+    which makes scanning fast even in huge repos. NUL-separated (-z) for
+    filename safety. Returns None if git is unavailable / not a repo.
+    """
+    try:
+        scan = subprocess.run(
+            ["git", "ls-files", "--cached", "--others", "--exclude-standard", "-z"],
+            cwd=str(root), capture_output=True, text=True, timeout=60,
+            errors="replace",
+        )
+        ign = subprocess.run(
+            ["git", "ls-files", "--others", "--ignored", "--exclude-standard", "-z"],
+            cwd=str(root), capture_output=True, text=True, timeout=60,
+            errors="replace",
+        )
+    except (subprocess.TimeoutExpired, FileNotFoundError, OSError):
+        return None
+    if scan.returncode != 0 or ign.returncode != 0:
+        return None
+    paths = [p for p in scan.stdout.split("\0") if p]
+    ignored_count = sum(1 for p in ign.stdout.split("\0") if p)
+    return paths, ignored_count
+
+
 PRIVACY_PATTERNS = [
     ("email", re.compile(r"\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}\b")),
     # CN mobile: optional +86 prefix, optional spaces/dashes between groups
@@ -184,15 +229,22 @@ PRIVACY_PATTERNS = [
     ("id-card-cn", re.compile(
         r"(?<!\d)[1-9]\d{5}(?:18|19|20)\d{2}(?:0\d|1[0-2])(?:[0-2]\d|3[01])\d{3}[\dXx](?!\d)"
     )),
-    # bank-card: 16-19 digits, but not hex (UUID/SHA), not all-same-digit.
-    # The all-same-digit check is done in scan_line() since lookahead position
-    # makes pure regex unreliable here.
+    # bank-card: 16-19 digits, but not hex (UUID/SHA), not all-same-digit,
+    # not part of a decimal float (leading '.'), and must pass the Luhn
+    # checksum (real card numbers always pass; random digit strings mostly
+    # fail). The all-same-digit / Luhn checks are done in scan_line() since
+    # lookahead position makes pure regex unreliable here.
     ("bank-card", re.compile(
-        r"(?<![\dA-Fa-f])\d{16,19}(?![\dA-Fa-f])"
+        r"(?<![\dA-Fa-f.])\d{16,19}(?![\dA-Fa-f])"
     )),
+    # api-key: value must be a quoted string ('...' / "...") OR start with a
+    # known key prefix (sk-, AKIA, ghp_, eyJ...). Unquoted identifiers like
+    # `extractStreamToken(event)` are function/var names, not secrets.
     ("api-key", re.compile(
         r"(?i)(api[_-]?key|secret|token|password|passwd|pwd|access[_-]?key|auth[_-]?token)"
-        r"\s*[:=]\s*['\"]?([A-Za-z0-9_\-/+=]{16,})['\"]?"
+        r"\s*[:=]\s*"
+        r"(?:['\"]([A-Za-z0-9_\-/+=]{16,})['\"]"
+        r"|(?:sk-[A-Za-z0-9_\-]{16,}|AKIA[A-Z0-9]{16}|ghp[ousr]_[A-Za-z0-9]{36,}|eyJ[A-Za-z0-9_\-]{20,})[A-Za-z0-9_\-/+=]*)"
     )),
     ("local-path-win", re.compile(r"[A-Z]:\\Users\\([\w\-\. ]+)\\", re.IGNORECASE)),
     ("local-path-unix", re.compile(r"/(?:Users|home)/([\w\-\. ]+)/")),
@@ -395,7 +447,11 @@ def scan_line(line: str, line_no: int | str, rel: str) -> list[Finding]:
         m = pat.search(line)
         if m:
             # bank-card: reject all-same-digit strings (e.g. 1111111111111111)
-            if name == "bank-card" and len(set(m.group())) == 1:
+            # and strings that fail the Luhn checksum (decimal floats, random
+            # long digit runs, timestamps — almost all false positives).
+            if name == "bank-card" and (
+                len(set(m.group())) == 1 or not _luhn_valid(m.group())
+            ):
                 continue
             if name == "email" and _is_safe_email(m.group()):
                 continue
@@ -603,8 +659,11 @@ def _self_test() -> int:
             if name == pat_name:
                 m = pat.search(text)
                 matched = bool(m)
-                # bank-card: reject all-same-digit strings (same logic as scan_line)
-                if matched and name == "bank-card" and len(set(m.group())) == 1:
+                # bank-card: reject all-same-digit / non-Luhn strings
+                # (same logic as scan_line)
+                if matched and name == "bank-card" and (
+                    len(set(m.group())) == 1 or not _luhn_valid(m.group())
+                ):
                     matched = False
                 check(f"{pat_name} on {text!r:.40}", matched, should_match)
                 return
@@ -656,8 +715,12 @@ def _self_test() -> int:
     check_pattern("id-card-cn", "110101199003074518", True)
     check_pattern("id-card-cn", "1234567890", False)
 
-    # bank-card: real card
-    check_pattern("bank-card", "6222021234567890123", True)
+    # bank-card: real card (passes Luhn)
+    check_pattern("bank-card", "4111111111111111", True)
+    # bank-card: long digit run that fails Luhn (random number) NOT a card
+    check_pattern("bank-card", "6222021234567890123", False)
+    # bank-card: decimal float fraction should NOT match
+    check_pattern("bank-card", "0.10228095582910934", False)
     # bank-card: hex string (UUID) should NOT match
     check_pattern("bank-card", "550e8400e29b41d4a716", False)
     # bank-card: all-same-digit should NOT match
@@ -665,7 +728,12 @@ def _self_test() -> int:
 
     # api-key
     check_pattern("api-key", "api_key = 'abcdefghijklmnopqrst'", True)
+    check_pattern("api-key", 'api_key = "abcdefghijklmnopqrstuvwxyz"', True)
     check_pattern("api-key", "api_key = 'short'", False)
+    # api-key: unquoted identifier is a function/var name, NOT a secret
+    check_pattern("api-key", "const token = extractStreamToken(event);", False)
+    # api-key: known prefix without quotes is still flagged
+    check_pattern("api-key", "token = sk-abcdefghijklmnopqrstuvwxyz123", True)
 
     # local paths
     check_pattern("local-path-win", r"D:\Users\john\projects", True)
@@ -888,6 +956,10 @@ def main() -> int:
                     help="max commits to scan in history (default 200)")
     ap.add_argument("--history-only", action="store_true",
                     help="only scan history, skip file scan")
+    ap.add_argument("--no-ignore", action="store_true",
+                    help="scan everything, do not skip .gitignore'd files")
+    ap.add_argument("--human", action="store_true",
+                    help="human-readable output (summary first, details after)")
     ap.add_argument("--self-test", action="store_true",
                     help="run built-in regression tests and exit")
     args = ap.parse_args()
@@ -906,17 +978,42 @@ def main() -> int:
     excludes = [re.compile(e.replace("*", ".*")) for e in args.exclude]
 
     findings: list[Finding] = []
+    ignored_count = 0
+    gitignore_used = False
 
     # File scan
     if not args.history_only:
         seen_dirs: set[str] = set()
         file_findings: list[Finding] = []
-        for p in iter_files(root):
-            rel = str(p.relative_to(root))
 
-            if any(pat.search(rel) for pat in excludes):
-                continue
+        # Collect candidate files: prefer `git ls-files` — the exact set of
+        # files that would be pushed (git-ignored paths are never even
+        # walked). Falls back to os.walk + built-in SKIP_DIRS when git is
+        # unavailable or --no-ignore is passed.
+        candidates: list[tuple[Path, str]] = []
 
+        def walk_fallback() -> None:
+            for p in iter_files(root):
+                rel = str(p.relative_to(root))
+                if any(pat.search(rel) for pat in excludes):
+                    continue
+                candidates.append((p, rel))
+
+        if args.no_ignore:
+            walk_fallback()
+        else:
+            listed = git_scan_list(root)
+            if listed is not None:
+                rels, ignored_count = listed
+                gitignore_used = True
+                for r in rels:
+                    if any(pat.search(r) for pat in excludes):
+                        continue
+                    candidates.append((root / r, r))
+            else:
+                walk_fallback()
+
+        for p, rel in candidates:
             try:
                 sz = p.stat().st_size
             except OSError:
@@ -970,6 +1067,10 @@ def main() -> int:
                     f.path = ":".join(parts[:3])
         findings.extend(aggregate_info_findings(hist_findings))
 
+    # Order findings: danger first, then warn, then info.
+    sev_rank = {"danger": 0, "warn": 1, "info": 2}
+    findings.sort(key=lambda f: (sev_rank.get(f.severity, 3), f.path, f.line or 0))
+
     # Build JSON output
     out = {
         "root": str(root),
@@ -978,15 +1079,51 @@ def main() -> int:
             "by_category": {},
             "by_severity": {},
         },
+        "ignored_by_git": ignored_count if gitignore_used else None,
         "findings": [asdict(f) for f in findings],
     }
     for f in findings:
         out["summary"]["by_category"][f.category] = out["summary"]["by_category"].get(f.category, 0) + 1
         out["summary"]["by_severity"][f.severity] = out["summary"]["by_severity"].get(f.severity, 0) + 1
 
-    json.dump(out, sys.stdout, indent=2, ensure_ascii=False)
-    print()  # trailing newline
+    if args.human:
+        _print_human(root, findings, ignored_count, gitignore_used)
+    else:
+        json.dump(out, sys.stdout, indent=2, ensure_ascii=False)
+        print()  # trailing newline
     return 0
+
+
+def _print_human(root: Path, findings: list[Finding],
+                 ignored_count: int, gitignore_used: bool) -> None:
+    """Human-readable report: summary line first, danger/warn detailed,
+    info aggregated into one line, gitignore skip note at the end."""
+    danger = [f for f in findings if f.severity == "danger"]
+    warn = [f for f in findings if f.severity == "warn"]
+    info = [f for f in findings if f.severity == "info"]
+
+    print(f"扫描 {root}")
+    if not findings:
+        print("未发现需处理项。")
+    else:
+        print(f"共 {len(findings)} 项发现：{len(danger)} danger / {len(warn)} warn / {len(info)} info")
+
+    def show(f: Finding) -> None:
+        loc = f"{f.path}" + (f":{f.line}" if f.line else "")
+        cnt = f" (x{f.count})" if f.count and f.count > 1 else ""
+        print(f"  [{f.severity}] {f.pattern} {loc}{cnt}")
+        if f.snippet:
+            print(f"        {f.snippet[:160]}")
+
+    for f in danger:
+        show(f)
+    for f in warn:
+        show(f)
+    for f in info:
+        show(f)
+
+    if gitignore_used:
+        print(f"已跳过 {ignored_count} 项被 git 忽略的文件（--no-ignore 可全量扫描）。")
 
 
 if __name__ == "__main__":

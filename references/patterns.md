@@ -58,8 +58,8 @@
 | `phone-cn` | `\+?86[\s\-]?1[3-9]\d(?:[\s\-]?\d){8}`（含 `+86`、带分隔符、空格） | warn |
 | `phone-landline-cn` | `0\d{2,3}[\s\-]?\d{7,8}` | warn |
 | `id-card-cn` | `[1-9]\d{5}(18\|19\|20)\d{2}(0\d\|1[0-2])([0-2]\d\|3[01])\d{3}[\dXx]` | **danger** |
-| `bank-card` | `\d{16,19}`（连续 16-19 位数字，排除十六进制/UUID 和全重复数字，未做 Luhn） | **danger** |
-| `api-key` | `(api[_-]?key\|secret\|token\|...)\s*[:=]\s*['\"]?([A-Za-z0-9_\-/+=]{16,})['\"]?` | **danger** |
+| `bank-card` | `\d{16,19}`（连续 16-19 位数字，排除十六进制/UUID、全重复数字、小数点后的浮点段；**必须过 Luhn 校验**才报出） | **danger** |
+| `api-key` | `(api[_-]?key\|secret\|token\|...)\s*[:=]\s*(['\"]值['\"] \| sk-/AKIA/ghp_/eyJ 前缀)`（值必须是带引号字符串或已知密钥前缀，变量名如 `extractStreamToken` 不报） | **danger** |
 | `local-path-win` | `[A-Z]:\\Users\\([\w\-\. ]+)\\` | warn |
 | `local-path-unix` | `/(?:Users\|home)/([\w\-\. ]+)/` | warn |
 | `home-tilde` | `~/\.?(?:ssh\|aws\|config\|gnupg)/[\w\-\.]+` | warn |
