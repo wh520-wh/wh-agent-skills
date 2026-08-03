@@ -40,6 +40,8 @@ git clone https://github.com/wh520-wh/Togithub-skill.git ~/.claude/skills/Togith
 
 ## 它扫描什么？
 
+**扫描范围 = 将推送的内容**：默认只扫 git 会推送的文件（尊重 `.gitignore`，`node_modules`、`dist` 等被忽略目录不遍历），大仓库几秒扫完；需要全量扫描时加 `--no-ignore`。
+
 | 类别 | 检测内容 | 严重度 |
 |---|---|---|
 | **危险文件** | `.env`、`*.pem`、`id_rsa*`、`credentials.json` | 🔴 danger |
@@ -89,14 +91,17 @@ git clone https://github.com/wh520-wh/Togithub-skill.git ~/.claude/skills/Togith
 ## 验证与测试
 
 ```bash
-# 跑内置回归测试（27 项，验证正则和文件扫描逻辑）
+# 跑内置回归测试（79 项，验证正则和文件扫描逻辑）
 python scripts/scan.py --self-test
 
-# 在目标项目上跑一次真实扫描
-python scripts/scan.py /path/to/your/project
+# 在目标项目上跑一次真实扫描（--human 人类可读输出：统计先行 + 逐条 + 聚合）
+python scripts/scan.py /path/to/your/project --human
 
-# 跑 git 历史扫描
-python scripts/scan.py /path/to/your/project --scan-history
+# 需要绕过 .gitignore 全量扫描时加 --no-ignore
+python scripts/scan.py /path/to/your/project --no-ignore
+
+# 跑 git 历史扫描（扫旧 commit 里的密钥、Co-Authored-By）
+python scripts/scan.py /path/to/your/project --scan-history --human
 ```
 
 ## 前置条件
