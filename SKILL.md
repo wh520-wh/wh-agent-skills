@@ -6,7 +6,16 @@ disable-model-invocation: true
 
 # First-Principles Architecture
 
-Use this skill only after explicit user invocation. Use it as a thinking lens, not as a mandatory implementation ceremony. Reconstruct the right system from its purpose before reasoning from the current code. Do not assume that first-principles thinking requires a rewrite.
+Use this skill only after explicit user invocation. Treat it as a thinking lens, not a mandatory implementation ceremony, a report template, or a fixed workflow. Once invoked, keep using it for the duration of the current plan, feature, or refactoring task; step back when the topic changes, the approach is finalized, or the user asks to stop.
+
+Orient automatically to what is being examined, and do not ask the user to clarify it when the context already makes it clear:
+
+- An unexecuted plan: scrutinize the plan rather than executing it—judge whether it patches old structure or builds the right target structure.
+- A new feature: judge where it should land in the project's core and what old-structure problems it exposes.
+- An existing codebase: find the root problem yourself from code, directories, tests, data flow, and call graphs.
+- Code being changed: judge whether the current edit fixes the system model or keeps patching the old one.
+
+Reconstruct the right system from its purpose before reasoning from the current code. Do not assume that first-principles thinking requires a rewrite.
 
 ## Establish the target
 
@@ -32,7 +41,15 @@ Do not reward reuse for its own sake. Reuse behavior and knowledge that still be
 
 ## Choose the change strategy
 
-Choose among these strategies from evidence:
+Before selecting a strategy, align with the user on how aggressive the change may be when they have not said so, and recommend a level:
+
+- **Conservative**: remove dead code and local mess only; avoid touching public interfaces.
+- **Moderate (default)**: adjust module boundaries, merge duplicated logic, replace local old abstractions.
+- **Destructive-creative**: delete old models, cut old paths, rebuild core structure—but only with evidence, a migration plan, and verification, never as a blind rewrite.
+
+Under the destructive level, default toward deleting the old: keep a piece of legacy only when it can be shown to still carry real business behavior, data compatibility, failure handling, or user expectations; otherwise list it as a deletion, merge, or replacement candidate. Even under the destructive level, avoid extreme rewrites—explain rationale and risk and get confirmation before large deletions, public-interface breaks, data migrations, or core-path replacements.
+
+Then choose among these strategies from evidence:
 
 - Use local refactoring when the core model is sound and the problem is limited to implementation quality.
 - Use incremental architectural migration when old and new behavior must coexist for a genuine operational reason.
@@ -59,9 +76,9 @@ When reviewing a plan, ensure its task order constructs the target architecture 
 
 State the root structural problem before proposing modules or files. Describe the ideal target, the real constraints, the recommended replacement boundary, what remains, what disappears, and why the selected strategy is proportionate.
 
-Distinguish observations from assumptions. Ask clarifying questions only when the answers would materially change the target architecture or replacement boundary; batch related questions together.
+Distinguish observations from assumptions. Ask clarifying questions only when the answers would materially change the target architecture, the replacement boundary, what can be deleted, or the migration order. Batch related questions together so the user can resolve them in one round, at most two—do not drip them out one at a time. Prefer answers you can get yourself by reading code, running tests, checking commit history, or inspecting data formats; only ask the user about product intent, historical reasons, or risk tolerance that only they know. Attach a recommended answer to each question, and mark remaining uncertainties as assumptions rather than interrogating the user.
 
-Explain conclusions in the user's language and at their level. When useful, pair plain user-facing consequences with precise architectural terminology.
+Explain conclusions in the user's language and at their level. When useful, pair plain user-facing consequences with precise architectural terminology; when you must use a technical term, follow it immediately with a plain-language gloss (for example, "unclear state ownership—that is, it is not visible from the code who actually owns this data"). Do not default to producing an architecture report; unless the user explicitly asks for one, fold the thinking into the current discussion: state the real problem, whether the current approach patches old structure or builds the right one, and your keep/reshape/replace/delete verdict, then continue with the next pivotal question.
 
 Do not change code, files, or plans unless the user asks for changes. When the user asks only for analysis, return an architectural judgment rather than silently turning it into an implementation task.
 
