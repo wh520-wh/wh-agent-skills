@@ -2,6 +2,7 @@
 name: first-principles-architecture
 description: Apply first-principles architectural reasoning to technical plans, system designs, refactoring proposals, codebase problems, and major changes. Use only when the user explicitly invokes this skill by name or with $first-principles-architecture; never activate it automatically from topic similarity.
 disable-model-invocation: true
+version: 2
 ---
 
 # First-Principles Architecture
@@ -14,6 +15,8 @@ Orient automatically to what is being examined, and do not ask the user to clari
 - A new feature: judge where it should land in the project's core and what old-structure problems it exposes.
 - An existing codebase: find the root problem yourself from code, directories, tests, data flow, and call graphs.
 - Code being changed: judge whether the current edit fixes the system model or keeps patching the old one.
+
+A directory tree shows how the system grew, not what it is: when surveying unfamiliar code, read the entry points, the data model, and the tests first-they expose the real architecture and its invariants fastest.
 
 Reconstruct the right system from its purpose before reasoning from the current code. Do not assume that first-principles thinking requires a rewrite.
 
@@ -39,6 +42,10 @@ Preserve stable domain capabilities whose behavior and ownership already fit the
 
 Do not reward reuse for its own sake. Reuse behavior and knowledge that still belong in the target architecture; do not preserve accidental structure merely because it already exists.
 
+A verdict about unnamed code is a hypothesis, not a finding: attach every classification to specific files, modules, or interfaces, and when you have sampled the codebase rather than read it whole, say what was read and what was not.
+
+Nothing is dead until proven dead everywhere: a symbol absent from the directories you read may still live in tests, config, or dynamic dispatch.
+
 ## Choose the change strategy
 
 Before selecting a strategy, align with the user on how aggressive the change may be when they have not said so, and recommend a level:
@@ -56,6 +63,8 @@ Then choose among these strategies from evidence:
 - Use bounded clean replacement when one subsystem has a fractured model but surrounding domain capabilities remain sound.
 - Recommend a full rewrite only when defects are systemic, boundaries cannot isolate them, and preserving the implementation costs more than reconstructing verified behavior.
 
+When evidence does not separate two strategies, prefer the one that degrades gracefully: every intermediate state shippable, every completed step valuable even if the effort stops midway.
+
 Prefer the smallest change that makes the architecture conceptually complete. Do not prefer the smallest diff when it leaves contradictory models or permanent migration machinery behind.
 
 ## Protect conceptual integrity
@@ -67,20 +76,14 @@ Evaluate whether the proposal reads as one coherent system:
 - Give every user action one authoritative execution path.
 - Keep public interfaces few and meaningful; keep implementation details private.
 - Avoid parallel runtimes, duplicate writes, speculative abstractions, pass-through modules, and permanent compatibility seams.
-- Make transitional code temporary, explicitly removable, and tied to a cutover condition.
-- Verify the final architecture through its production-facing interfaces, and include evidence that obsolete paths have disappeared.
+- Make transitional code temporary, explicitly removable, and tied to a cutover condition that can actually be checked-a metric, a date, or a flag flip, never "when things stabilize".
+- Verify the final architecture through its production-facing interfaces, and prove obsolete paths gone rather than assume it: search the repository for old entry points and references, run the tests through the new path, and check logs or telemetry for remaining traffic to what was cut.
 
 When reviewing a plan, ensure its task order constructs the target architecture rather than repeatedly modifying code that a later task deletes. Require the plan to state what is created, preserved, extracted, migrated, cut over, and removed. Make the final state understandable without knowing the migration history.
 
 ## Communicate the reasoning
 
-State the root structural problem before proposing modules or files. Describe the ideal target, the real constraints, the recommended replacement boundary, what remains, what disappears, and why the selected strategy is proportionate.
-
-Distinguish observations from assumptions. Ask clarifying questions only when the answers would materially change the target architecture, the replacement boundary, what can be deleted, or the migration order. Batch related questions together so the user can resolve them in one round, at most two—do not drip them out one at a time. Prefer answers you can get yourself by reading code, running tests, checking commit history, or inspecting data formats; only ask the user about product intent, historical reasons, or risk tolerance that only they know. Attach a recommended answer to each question, and mark remaining uncertainties as assumptions rather than interrogating the user.
-
-Explain conclusions in the user's language and at their level. When useful, pair plain user-facing consequences with precise architectural terminology; when you must use a technical term, follow it immediately with a plain-language gloss (for example, "unclear state ownership—that is, it is not visible from the code who actually owns this data"). Do not default to producing an architecture report; unless the user explicitly asks for one, fold the thinking into the current discussion: state the real problem, whether the current approach patches old structure or builds the right one, and your keep/reshape/replace/delete verdict, then continue with the next pivotal question.
-
-Do not change code, files, or plans unless the user asks for changes. When the user asks only for analysis, return an architectural judgment rather than silently turning it into an implementation task.
+State the root structural problem before proposing modules or files. Distinguish observations from assumptions, and mark unresolved uncertainties as assumptions rather than interrogating the user. Batch related questions into one round, at most two, each with a recommended answer; prefer answers you can get yourself from code, tests, or commit history. Do not default to an architecture report-fold the verdict into the current discussion. When the user's chosen direction conflicts with the target model, state the conflict and its consequence once, clearly, then execute their decision: the trade-off is theirs to own. Do not change code, files, or plans unless the user asks for changes.
 
 ## Avoid false first principles
 
