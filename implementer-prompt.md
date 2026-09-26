@@ -3,10 +3,8 @@
 Use this template when dispatching an implementer subagent.
 
 ```
-Subagent (general-purpose):
+Agent (subagent_type: coder):
   description: "Implement Task N: [task name]"
-  model: [MODEL — REQUIRED: choose per SKILL.md Model Selection; an omitted
-         model silently inherits the session's most expensive one]
   prompt: |
     You are implementing Task N: [task name]
 
@@ -21,13 +19,17 @@ Subagent (general-purpose):
 
     ## Before You Begin
 
-    If you have questions about:
-    - The requirements or acceptance criteria
-    - The approach or implementation strategy
-    - Dependencies or assumptions
-    - Anything unclear in the task description
+    The brief is your requirements — read it as settled, not as a draft to negotiate.
+    Where it is unclear about requirements, acceptance criteria, approach, dependencies,
+    or anything else:
 
-    **Ask them now.** Raise any concerns before starting work.
+    **Decide, and keep going.** Choose the reading that preserves the brief's stated
+    intent and the plan's design. Do not stop to ask and do not leave the question open:
+    the controller is running unattended and cannot round-trip a clarification to the user.
+
+    Record the call in your report under **Autonomous decisions**. Escalating is reserved
+    for an act that would fundamentally change the project, cannot be rolled back, or
+    shows the plan as a whole to be wrong.
 
     ## Your Job
 
@@ -41,8 +43,10 @@ Subagent (general-purpose):
 
     Work from: [directory]
 
-    **While you work:** If you encounter something unexpected or unclear, **ask questions**.
-    It's always OK to pause and clarify. Don't guess or make assumptions.
+    **While you work:** If you encounter something unexpected or unclear, decide it and
+    move on. Take the minimal change that keeps the task's intent, and log the call under
+    **Autonomous decisions**. A band-aid is the right default — root causes get deferred
+    to the ledger, not chased mid-task.
 
     While iterating, run the focused test for what you're changing; run the
     full suite once before committing, not after every edit.
@@ -62,19 +66,27 @@ Subagent (general-purpose):
 
     ## When You're in Over Your Head
 
-    It is always OK to stop and say "this is too hard for me." Bad work is worse than
-    no work. You will not be penalized for escalating.
+    Escalating means reporting back to the controller — **never** to the user, who is not
+    watching. The controller supplies context, sharpens the prompt, or splits the task;
+    that round-trip is cheap, a question to the user is not.
 
-    **STOP and escalate when:**
-    - The task requires architectural decisions with multiple valid approaches
-    - You need to understand code beyond what was provided and can't find clarity
-    - You feel uncertain about whether your approach is correct
-    - The task involves restructuring existing code in ways the plan didn't anticipate
-    - You've been reading file after file trying to understand the system without progress
+    **Report BLOCKED or NEEDS_CONTEXT only when:**
+    - The task cannot be done without an act that is unrecoverable (data loss, rewriting
+      published history, deploying, spending money)
+    - The brief contradicts the actual codebase in a way that shows the plan as a whole
+      is obsolete
+    - You have exhausted your own options and cannot produce work you would stand behind
 
-    **How to escalate:** Report back with status BLOCKED or NEEDS_CONTEXT. Describe
-    specifically what you're stuck on, what you've tried, and what kind of help you need.
-    The controller can provide more context, re-dispatch with a more capable model,
+    **Everything else is yours to decide:** multiple valid approaches, code you cannot
+    fully see, uncertainty about your own approach, restructuring the plan did not
+    anticipate, circling a tangled file without progress. Take the least invasive path
+    that satisfies the brief, note the risk as a concern, and finish the task — a
+    reported concern beats a stalled run. Bad work is worse than no work, but a stalled
+    run is worse than both.
+
+    **How to escalate:** Report back with status BLOCKED or NEEDS_CONTEXT. Describe what
+    you are stuck on, what you tried, what you decided instead, and what help you need.
+    The controller can provide more context, re-dispatch with a sharper prompt,
     or break the task into smaller pieces.
 
     ## Before Reporting Back: Self-Review
@@ -117,6 +129,10 @@ Subagent (general-purpose):
 
     Write your full report to [REPORT_FILE]:
     - What you implemented (or what you attempted, if blocked)
+    - **Autonomous decisions** — every judgment call you made instead of asking: what you
+      chose, the alternative you rejected, why, and how to reverse it. The controller
+      copies these into the run's `decisions.md`; an unlogged decision is one the user
+      cannot audit afterwards.
     - What you tested and test results
     - **TDD Evidence** (if TDD was required for this task):
       - RED: command run, relevant failing output before implementation, and why the failure was expected
