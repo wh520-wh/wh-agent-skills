@@ -1,0 +1,13 @@
+interface:
+  display_name: 缺氧 Mod 开发经验
+  short_description: 以原版开发者视角补齐系统关联、美术与界面细节，减少遗漏并自然融入缺氧。
+  default_prompt: 使用 $create-oxygennotincluded-mod 帮我制作并打磨缺氧 Mod，主动考虑易遗漏的系统关联，并先确认新美术的合作方式。
+  icon_small: assets/icon.svg
+  icon_large: assets/icon.svg
+policy:
+  products:
+  - chatgpt
+  - codex
+  - api
+  - atlas
+  allow_implicit_invocation: true
