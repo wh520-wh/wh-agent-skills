@@ -1,0 +1,97 @@
+{
+  "migrated_on": "2026-10-12",
+  "owner": "wh520-wh",
+  "destination_repository": "wh520-wh/wh-agent-skills",
+  "preserve_skill_files": true,
+  "preserve_default_branch_history": true,
+  "skills": [
+    {
+      "repository": "wh520-wh/create-oxygennotincluded-mod",
+      "source_url": "https://github.com/wh520-wh/create-oxygennotincluded-mod",
+      "default_branch": "main",
+      "commit": "3ef37b9b910403e1521993fe4dd7025f096d58e8",
+      "tree": "6f1d613ec22f82cda6fed352cb485bb4d2952c57",
+      "destination": "skills/create-oxygennotincluded-mod"
+    },
+    {
+      "repository": "wh520-wh/run-plan",
+      "source_url": "https://github.com/wh520-wh/run-plan",
+      "default_branch": "master",
+      "commit": "a21c49f5affbadc94fafc1dfb07e28d013b92d7d",
+      "tree": "5f5c46275a16c081717431c0629dec724440962b",
+      "destination": "skills/run-plan"
+    },
+    {
+      "repository": "wh520-wh/planning-files-auditor",
+      "source_url": "https://github.com/wh520-wh/planning-files-auditor",
+      "default_branch": "main",
+      "commit": "08b8aa34ddcabd811c7652c2054c57244c3aecd2",
+      "tree": "2858b1e36985f2a5a06b358180d7c6dc42eb60c8",
+      "destination": "skills/planning-files-auditor"
+    },
+    {
+      "repository": "wh520-wh/first-principles-architecture-skill",
+      "source_url": "https://github.com/wh520-wh/first-principles-architecture-skill",
+      "default_branch": "main",
+      "commit": "b94adf8895538f7ef4c59ecdb7478aa6d0a8e414",
+      "tree": "e2ea2612d06a610dafc4e48c9f77320a54b4a17f",
+      "destination": "skills/first-principles-architecture"
+    },
+    {
+      "repository": "wh520-wh/Togithub-skill",
+      "source_url": "https://github.com/wh520-wh/Togithub-skill",
+      "default_branch": "master",
+      "commit": "859ec9058173df99f18d0611838a574f9cfa99dc",
+      "tree": "6b2d9f9e68471ca18428facc5e80b0438273bad4",
+      "destination": "skills/Togithub"
+    },
+    {
+      "repository": "wh520-wh/later-skill",
+      "source_url": "https://github.com/wh520-wh/later-skill",
+      "default_branch": "main",
+      "commit": "193217bde56ed02e40cecf0bd9dbf2ad7f08c929",
+      "tree": "21c44eb5d446e8e937a4d4eb4392bcb4c6d519f0",
+      "destination": "skills/later"
+    },
+    {
+      "repository": "wh520-wh/VideoUnderstanding-skill",
+      "source_url": "https://github.com/wh520-wh/VideoUnderstanding-skill",
+      "default_branch": "master",
+      "commit": "d88db2db55908c588d614bffbf37631ff9562aba",
+      "tree": "082fb593d5430d5c1046d5b1075895ade2401f8f",
+      "destination": "skills/videounderstand"
+    },
+    {
+      "repository": "wh520-wh/prune-cc",
+      "source_url": "https://github.com/wh520-wh/prune-cc",
+      "default_branch": "master",
+      "commit": "96971db9df0eb8972bc0c7b529f00c1f38daff57",
+      "tree": "3d68077273c5acd832e0a9d3a6aa67e4019d393d",
+      "destination": "skills/Prune-cc"
+    },
+    {
+      "repository": "wh520-wh/minecraft-create-mods",
+      "source_url": "https://github.com/wh520-wh/minecraft-create-mods",
+      "default_branch": "main",
+      "commit": "a5014fb98d649bfff09522312e5a0680ef8a7f67",
+      "tree": "ee69053521fea3edd161cc9e36e357a2f85e3ff4",
+      "destination": "skills/create-mods"
+    },
+    {
+      "repository": "wh520-wh/delivery-acceptance-yanshou",
+      "source_url": "https://github.com/wh520-wh/delivery-acceptance-yanshou",
+      "default_branch": "main",
+      "commit": "49fe00972b3a43f63931ecfc31ac8fd39737c23c",
+      "tree": "3da2dd8da2547071fc860ddb58a28ab577a9c73c",
+      "destination": "skills/delivery-acceptance"
+    },
+    {
+      "repository": "wh520-wh/whfind-bugs",
+      "source_url": "https://github.com/wh520-wh/whfind-bugs",
+      "default_branch": "main",
+      "commit": "da8d2c50d4cf81ef9f374df75175c4b289136389",
+      "tree": "a1ddd9c9b3b75b54ec9422c9d70228e0a1adf600",
+      "destination": "skills/whfind-bugs"
+    }
+  ]
+}
