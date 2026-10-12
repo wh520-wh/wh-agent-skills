@@ -1,0 +1,4 @@
+interface:
+  display_name: "Video Understand"
+  short_description: "Turn tutorial videos into verified image-text manuals."
+  default_prompt: "Use $videounderstand to turn this local tutorial video into a DOCX and PDF image-text manual."

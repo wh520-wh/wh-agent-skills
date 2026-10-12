@@ -1,0 +1,20 @@
+[
+  {
+    "id": "basic-tutorial",
+    "prompt": "帮我把 D:\\videos\\tutorial.mp4 转成图文手册，输出到桌面",
+    "expected_behavior": "提取周期帧+场景帧，生成联系表，输出 DOCX/PDF 到桌面，验证通过",
+    "dry_run": true
+  },
+  {
+    "id": "select-timestamps",
+    "prompt": "分析这个视频，重点截图 00:01:30 和 00:03:45 这两个时间点，整理成操作指南",
+    "expected_behavior": "提取指定时间戳的帧，生成带这些关键截图的手册",
+    "dry_run": true
+  },
+  {
+    "id": "verify-deliverable",
+    "prompt": "把 tutorial.webm 转成 DOCX 手册，验证一下里面至少有 10 张截图",
+    "expected_behavior": "生成 DOCX，运行验证脚本确认图片数 ≥ 10",
+    "dry_run": true
+  }
+]
