@@ -1,0 +1,23 @@
+# 本地写作素材，含真实项目路径，不入库
+README-WRITING-REFERENCE.md
+
+# 编辑器/系统
+.DS_Store
+Thumbs.db
+*.swp
+.vscode/
+.idea/
+
+# 验收过程产物（每次验收在目标项目里生成，不属于本 skill）
+# 只忽略根目录与 docs/ 下的，放行 examples/ 里的示例
+/*-acceptance-report.md
+/*-polish.md
+/docs/*-acceptance-report.md
+/docs/*-polish.md
+
+# 临时探针
+/tmp-probe*.mjs
+.gstack/
+
+# AI 协作痕迹（本地 Claude Code 设置，不入仓库）
+.claude/

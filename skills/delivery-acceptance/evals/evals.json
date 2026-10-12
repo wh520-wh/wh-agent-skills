@@ -1,0 +1,19 @@
+{
+  "evals": [
+    {
+      "name": "asks-opening-policy-before-acceptance",
+      "prompt": "验收一下 docs/superpowers/plans/2026-06-19-story-clock-part-a.md 这个计划，程序员说做完了。",
+      "expected_output": "必须先询问发现问题后的处理策略、提交授权、验收深度和补充维度；不能默认继续。"
+    },
+    {
+      "name": "report-goes-to-reports-and-no-plan-after-fixed",
+      "prompt": "验收 docs/superpowers/plans/2026-06-19-story-clock-part-a.md。如果发现小问题可以顺手修。",
+      "expected_output": "验收报告落到 docs/superpowers/reports；若问题已修复并复验通过，不再写 polish/fix plan，只在报告中记录修复摘要和证据。"
+    },
+    {
+      "name": "writes-fix-plan-only-when-user-says-do-not-fix",
+      "prompt": "验收 docs/superpowers/plans/2026-06-19-story-clock-part-a.md，但先不要修复，只告诉我问题。",
+      "expected_output": "写 acceptance report 和 docs/superpowers/plans/<slug>-fix-plan.md；报告标注未闭环，fix plan 只包含未来要执行的修复工作。"
+    }
+  ]
+}
