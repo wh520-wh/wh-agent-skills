@@ -1,0 +1,5 @@
+interface:
+  display_name: "Run Plan"
+  short_description: "Execute an existing implementation plan - subagent or inline mode"
+policy:
+  allow_implicit_invocation: false
