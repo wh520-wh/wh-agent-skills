@@ -21,6 +21,8 @@ npx skills add wh520-wh/wh-agent-skills --skill run-plan
 
 也可以克隆本仓库，再将对应的完整技能目录放入所使用 Agent 的技能目录。请保留技能目录中的脚本、参考资料和素材。
 
+当前 Skills CLI 可以识别其中 10 项技能。`Togithub` 的原始 YAML 元数据存在解析问题，会被该工具跳过；本次保留其原文件，请通过克隆仓库后复制完整的 `skills/Togithub/` 目录手动安装。
+
 ## 技能目录
 
 | 技能 | 用途 | 使用条件 |
