@@ -1,0 +1,21 @@
+{
+  "name": "planning-files-auditor",
+  "owner": {
+    "name": "wh520-wh"
+  },
+  "metadata": {
+    "description": "Audit claimed-completion results from planning-with-files-zh workflows",
+    "version": "0.1.0"
+  },
+  "plugins": [
+    {
+      "name": "planning-files-auditor",
+      "description": "审计 planning-with-files-zh 工作流产出的 task_plan.md / findings.md / progress.md 中声称的完成结果，输出证据核验报告与修复提示词",
+      "source": "./",
+      "strict": true,
+      "skills": [
+        "./"
+      ]
+    }
+  ]
+}

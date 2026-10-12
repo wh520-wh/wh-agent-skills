@@ -1,0 +1,57 @@
+# 跨 runtime metadata for planning-files-auditor (OpenAI / generic non-Claude agents)
+#
+# Claude Code 主适配在仓库根 SKILL.md 的 frontmatter。本文件给那些
+# 用 OpenAI/Codex 等 runtime 的 Agent 框架一份等效的元数据声明。
+#
+# 已声明的字段是 v0.1.x 的最小可用集;v0.2.x 计划补齐 tool_use/triggers/
+# evidence_grades 等更细粒度的运行时契约,见仓库 CHANGELOG 与 issue 区。
+
+interface:
+  display_name: "Planning Files Auditor"
+  short_description: "审计规划文件中的完成声明、证据质量、交付风险,并生成修复提示词。"
+  long_description: |
+    `planning-with-files-zh` 的官方质检岗。
+    当 AI 跑完一个 planning 任务、在 progress.md 里写"已完成 / 已测试",
+    本 skill 把那些话当作待核验的声明,通过查 git diff、源码、测试输出
+    来反驳虚假完成。默认只读,绝不修改源码或三件套。
+  default_prompt: "使用 $planning-files-auditor 审计当前 planning-with-files-zh 任务是否真实完成,并输出交付风险和修复提示词。"
+  example_prompts:
+    - "审计我当前项目的 planning-with-files-zh 任务"
+    - "前一会话说做完的功能,帮我核验一下是不是真做完了"
+    - "progress.md 写'测试全过',你查证据"
+    - "AI 协作场景里,你做'审计'的那个 agent"
+
+metadata:
+  version: "0.1.0"
+  license: "MIT"
+  homepage: "https://github.com/wh520-wh/planning-files-auditor"
+  audits: "OthmanAdi/planning-with-files (zh variant)"
+  audits_versions: "v3.0.x - v3.1.x"
+  primary_inputs:
+    - "task_plan.md"
+    - "findings.md"
+    - "progress.md"
+    - ".active_plan (v3.1+)"
+    - ".attestation/ (v3.1+)"
+  primary_output: "structured 13-section Chinese audit report"
+
+policy:
+  allow_implicit_invocation: true
+  default_readonly: true
+  forbidden_actions:
+    - "modify source code"
+    - "modify task_plan.md / findings.md / progress.md"
+    - "execute fixes directly"
+    - "run dependency installs, migrations, or formatters without consent"
+    - "trust 'complete' / 'done' / '已完成' labels without external evidence"
+  required_actions:
+    - "ask user (in 简体中文) before any command that could mutate files"
+    - "mark unsupported claims as `未验证` instead of guessing"
+    - "treat self-memory as a claim, not as evidence"
+
+runtime_compatibility:
+  claude_code: "primary, see ../SKILL.md"
+  openai_codex: "basic (this file). full runtime contract in v0.2.x."
+  opencode: "untested. PR welcome."
+  cursor: "untested. PR welcome."
+  hermes: "untested. PR welcome."

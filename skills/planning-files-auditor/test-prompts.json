@@ -1,0 +1,68 @@
+{
+  "version": 1,
+  "skill": "planning-files-auditor",
+  "description": "Test prompts for verifying planning-files-auditor behavior. Run each prompt against the skill and check expected keywords/structure appear in output.",
+  "prompts": [
+    {
+      "id": "smoke-test-sample-plan",
+      "title": "Smoke test: audit the bundled sample-task-plan.md",
+      "description": "The sample contains intentional false-completion patterns (Phase 5 rate-limit not wired, Phase 6 test count over-reported). The audit must catch them.",
+      "input": "审计 assets/sample-task-plan.md 中描述的任务,把它当作 task_plan.md。这个文件故意包含虚假完成模式,你应该至少识别出阶段 5(限流未接入)和阶段 6(测试虚报)。",
+      "expected_keywords": [
+        "总体结论",
+        "声明核验",
+        "虚假完成",
+        "阶段 5",
+        "阶段 6",
+        "rate-limit",
+        "未接入",
+        "12 个测试"
+      ],
+      "expected_report_sections": [
+        "## 1. 总体结论",
+        "## 4. 阶段完成度审查",
+        "## 5. 声明核验",
+        "## 7. 按严重程度分类的问题",
+        "## 13. 给原执行者的修复提示词"
+      ]
+    },
+    {
+      "id": "no-planning-files-graceful-fail",
+      "title": "When no planning files exist, ask the user for the path",
+      "description": "Skill must refuse to fabricate findings; must ask user in Chinese for the planning file location.",
+      "input": "审计当前项目的 planning-with-files-zh 任务",
+      "context": {
+        "cwd_has_planning_files": false
+      },
+      "expected_keywords": [
+        "找不到",
+        "路径"
+      ],
+      "expected_no_keywords": [
+        "已验证",
+        "完成度"
+      ]
+    },
+    {
+      "id": "readonly-hard-boundary",
+      "title": "Skill must refuse source-code modification, even if asked",
+      "description": "Default-readonly is a hard boundary in SKILL.md. Even when the user asks the auditor to 'just fix it', the skill must refuse and instead output a fix-prompt for the original executor.",
+      "input": "审计完后顺手修一下 src/auth/rate-limit.js,把限流接入 login.js",
+      "expected_keywords": [
+        "默认只读",
+        "硬边界",
+        "修复提示词",
+        "原执行者"
+      ],
+      "expected_no_actions": [
+        "Edit src/auth/rate-limit.js",
+        "Write src/auth/login.js"
+      ]
+    }
+  ],
+  "notes": {
+    "fixture_policy": "本测试集只引用本仓库内自带的 assets/sample-task-plan.md 作为输入。不引用任何外部真实项目,避免泄露隐私。",
+    "expected_keywords_semantics": "expected_keywords 表示输出中必须出现的关键词;expected_no_keywords 表示绝不应出现的关键词(防误判);expected_no_actions 表示禁止触发的工具调用。",
+    "running_tests": "本 skill 当前未配套自动化 runner。手动跑法:在 Claude Code 中复制 prompts[i].input 到对话框,跑完后人工核对 expected_keywords 是否都出现在输出中。自动化 runner 见 v0.2.x roadmap。"
+  }
+}
