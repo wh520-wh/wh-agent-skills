@@ -26,6 +26,7 @@
 - **接通完整功能与玩家反馈**：沿"发现/研究 → 获得/建造 → 搬运/连接 → 使用 → 故障或环境变化 → 保存读取 → 拆除/死亡/相变"推导——元素能流动不代表能装瓶，实体注册不代表可见，能发电不代表房间和调优齐全。
 - **做原版风格的美术与动画**：涉及新建或整体重做美术时，先让你选合作方式（完全委托 / 你提供原型 / 先看三个方案）；成熟交付仍以与同类原版同场协调为标准。
 - **审查你已有的 Mod**：沿系统关联思路和生命周期主动发现未点名的遗漏，按改动范围深查，不机械全量。
+- **核对物品与出料**：区分物理原点和可见底面，检查各质量档贴地、建筑内外出料格、翻转与备用位置；分别接通瓶罐、清扫储存、轨道及液气管道。
 - **定位典型故障**：哈希错位、材质时机、动画后缀、图标问号与巨大、蓝图显示成品、碎块不可见……已确认的事实与"通用风险"分开记录。
 - **按风险收口验证与交付**：分清"证据能说明什么"；没运行游戏不写成通过；交付可安装成果、可维护源码和具体待验证项。
 
@@ -82,10 +83,10 @@
 ## 快速开始
 
 ```bash
-git clone https://github.com/wh520-wh/create-oxygennotincluded-mod ~/.claude/skills/create-oxygennotincluded-mod
+npx skills add wh520-wh/wh-agent-skills --skill create-oxygennotincluded-mod
 ```
 
-> Windows 下 `~/.claude/skills/` 实际是 `C:\Users\<你>\.claude\skills\`。仓库自带 [`agents/openai.yaml`](agents/openai.yaml)，Codex 等读取 agents 目录的宿主也可直接使用。
+> 也可以克隆技能合集，将完整的 `skills/create-oxygennotincluded-mod/` 目录复制到所使用 Agent 的技能目录。技能自带 [`agents/openai.yaml`](agents/openai.yaml)，Codex 等读取 agents 目录的宿主也可直接使用。
 
 装完对 Agent 说：
 
@@ -95,7 +96,7 @@ git clone https://github.com/wh520-wh/create-oxygennotincluded-mod ~/.claude/ski
 
 Agent 会：涉及新美术时先确认合作方式 → 恢复你的需求与目标版本 → 找最接近的原版对象 → 沿生命周期补齐系统关联并实现 → 按需检查结果 → 交付可安装成果，并说明关键变化、已验证内容与具体待验证项。
 
-> 仓库地址：https://github.com/wh520-wh/create-oxygennotincluded-mod
+> 仓库地址：https://github.com/wh520-wh/wh-agent-skills/tree/main/skills/create-oxygennotincluded-mod
 
 ---
 
@@ -160,7 +161,7 @@ create-oxygennotincluded-mod/
 │   └── verification-and-release.md # 按风险选检查、证据边界、排错共存、存档与交付
 ├── agents/openai.yaml              # Codex 等宿主的 agent 元数据
 ├── assets/icon.svg                 # 图标
-├── test-prompts.json               # 12 条可选评估示例（prompt + focus）
+├── test-prompts.json               # 16 条可选评估示例（prompt + focus）
 ├── LICENSE                         # MIT
 └── README.md
 ```
@@ -169,7 +170,7 @@ create-oxygennotincluded-mod/
 
 ## 验收与测试
 
-本 skill 不含可执行脚本；[`test-prompts.json`](test-prompts.json) 是**可选的技能作者评估示例**，不要求每次开发执行；独立试用时只给 prompt、不提前给关注点。12 条覆盖：新液体、发电机与调优、局部图标修复、美术原型、方案选择、已确认调优的信息补全、冰类碎块、植物、动物、装备、世界生成、存档迁移。
+本 skill 不含可执行脚本；[`test-prompts.json`](test-prompts.json) 是**可选的技能作者评估示例**，不要求每次开发执行；独立试用时只给 prompt、不提前给关注点。16 条覆盖：新液体、发电机与调优、局部图标修复、美术原型、方案选择、已确认调优的信息补全、冰类碎块、植物、动物、装备、世界生成、存档迁移，并补充碎块贴地、出料格、三态物流和原版状态提示。
 
 合格表现的核心：**没被点名的关联能想起来，没做的验证不会被说成做了，用户澄清或新证据出现后能更新结论。**
 
