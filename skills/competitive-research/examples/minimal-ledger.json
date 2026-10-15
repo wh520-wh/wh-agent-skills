@@ -1,0 +1,50 @@
+{
+  "research_date": "2026-07-21",
+  "evidence": [
+    {
+      "id": "E1",
+      "competitor": "Obsidian",
+      "claim": "Obsidian documentation states that notes are stored as Markdown plain text files in a local folder.",
+      "source_url": "https://help.obsidian.md/Files+and+folders/How+Obsidian+stores+data",
+      "source_type": "official_docs",
+      "accessed_on": "2026-07-21",
+      "evidence_locator": "How Obsidian stores data",
+      "classification": "fact",
+      "confidence": "high"
+    },
+    {
+      "id": "E2",
+      "competitor": "Notion",
+      "claim": "Notion's product page presents the product as a connected workspace for teams.",
+      "source_url": "https://www.notion.so/product",
+      "source_type": "official_product",
+      "accessed_on": "2026-07-21",
+      "evidence_locator": "Product page",
+      "classification": "fact",
+      "confidence": "medium"
+    }
+  ],
+  "recommendations": [
+    {
+      "id": "R1",
+      "priority": "P0",
+      "statement": "Ship Markdown import, export, and visible backup status.",
+      "evidence_ids": ["E1"],
+      "acceptance_signal": "An imported folder round-trips without changing file names or note content."
+    },
+    {
+      "id": "R2",
+      "priority": "P1",
+      "statement": "Add local search with source-file provenance.",
+      "evidence_ids": ["E1"],
+      "acceptance_signal": "Every result opens its source file and line context."
+    },
+    {
+      "id": "R3",
+      "priority": "P2",
+      "statement": "Evaluate sharing after local ownership workflows are proven.",
+      "evidence_ids": ["E2"],
+      "acceptance_signal": "Five target users complete a sharing prototype without losing local ownership."
+    }
+  ]
+}

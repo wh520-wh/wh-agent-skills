@@ -92,6 +92,13 @@
       "commit": "da8d2c50d4cf81ef9f374df75175c4b289136389",
       "tree": "a1ddd9c9b3b75b54ec9422c9d70228e0a1adf600",
       "destination": "skills/whfind-bugs"
+    },
+    {
+      "source_type": "local-directory",
+      "source_directory_name": "competitive-research",
+      "imported_on": "2026-10-15",
+      "git_history_available": false,
+      "destination": "skills/competitive-research"
     }
   ]
 }

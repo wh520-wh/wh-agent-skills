@@ -1,0 +1,4 @@
+interface:
+  display_name: "竞品调研"
+  short_description: "跨来源调研竞品并形成证据链、定位分析和可执行路线图"
+  default_prompt: "Use $competitive-research to analyze competitors for this project and recommend a prioritized roadmap."

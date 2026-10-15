@@ -21,7 +21,7 @@ npx skills add wh520-wh/wh-agent-skills --skill run-plan
 
 也可以克隆本仓库，再将对应的完整技能目录放入所使用 Agent 的技能目录。请保留技能目录中的脚本、参考资料和素材。
 
-当前 Skills CLI 可以识别其中 10 项技能。`Togithub` 的原始 YAML 元数据存在解析问题，会被该工具跳过；本次保留其原文件，请通过克隆仓库后复制完整的 `skills/Togithub/` 目录手动安装。
+可用技能以 `--list` 的输出为准。`Togithub` 的原始 YAML 元数据存在解析问题，会被该工具跳过；本次保留其原文件，请通过克隆仓库后复制完整的 `skills/Togithub/` 目录手动安装。
 
 ## 技能目录
 
@@ -32,6 +32,7 @@ npx skills add wh520-wh/wh-agent-skills --skill run-plan
 | [whfind-bugs](skills/whfind-bugs) | 提出缺陷候选，通过独立反驳筛选确认问题 | 专项缺陷调查 |
 | [delivery-acceptance](skills/delivery-acceptance) | 按计划、源码、测试与边界探针验收交付 | 需要实施计划 |
 | [planning-files-auditor](skills/planning-files-auditor) | 核验规划文件中的完成声明 | 对应 task_plan.md、findings.md、progress.md |
+| [competitive-research](skills/competitive-research) | 用一手来源开展竞品研究，整理证据、差异定位与产品路线图 | 需要明确研究对象与决策目标 |
 | [Togithub](skills/Togithub) | 扫描、清理并发布项目到 GitHub | 依赖 GitHub CLI；清理与发布沿用原授权规则 |
 | [later](skills/later) | 延迟执行一次任务 | Claude Code 专用定时工具 |
 | [Prune-cc](skills/Prune-cc) | 调查并卸载技能、插件与市场安装 | Claude Code 专用 |
@@ -68,6 +69,8 @@ wh-agent-skills/
 
 ## 来源与许可证
 
-各技能由原独立仓库迁入，源仓库、默认分支和迁移时的提交记录见 [SOURCES.json](SOURCES.json)。迁入技能的默认分支 Git 历史保留在本仓库的提交历史中，文件内容按迁移时的源版本完整保留。
+最初迁入的技能来自原独立仓库，源仓库、默认分支和迁移时的提交记录见 [SOURCES.json](SOURCES.json)。这些技能的默认分支 Git 历史保留在本仓库的提交历史中，文件内容按迁移时的源版本完整保留。
+
+`competitive-research` 于 2026-10-15 从本地技能目录补入，保留全部技能文件；该目录没有独立 Git 历史，来源类型另记于 `SOURCES.json`。
 
 本仓库采用 [MIT](LICENSE) 许可证。各技能保留自己的 LICENSE 和来源说明，原有版权与第三方说明继续适用。

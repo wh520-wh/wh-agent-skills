@@ -1,0 +1,25 @@
+{
+  "research_date": "2026-07-21",
+  "evidence": [
+    {
+      "id": "E1",
+      "competitor": "Unverified Product",
+      "claim": "A search snippet says this product has a feature.",
+      "source_url": "http://example.com",
+      "source_type": "search_snippet",
+      "accessed_on": "",
+      "evidence_locator": "",
+      "classification": "fact",
+      "confidence": "high"
+    }
+  ],
+  "recommendations": [
+    {
+      "id": "R1",
+      "priority": "P0",
+      "statement": "Build a feature.",
+      "evidence_ids": ["E99"],
+      "acceptance_signal": ""
+    }
+  ]
+}
