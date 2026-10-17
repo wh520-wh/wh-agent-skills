@@ -54,7 +54,14 @@ Execution Platform 的 6×5 建筑开发中核对了 U59 的 `BuildingDef.GetVis
 
 原版动画加载与 `ModUtil.AddKAnimMod` 路径不是同一份契约；不能因原版使用 `batchgroup.yaml` 就假设标准 Mod 加载器也识别它。确认实际消费者、资源引用和缺失行为。
 
-本项目候选方案仅针对独有 `execution_dupe_kanim`，将动画配置为 AnimOnly、引用 `human` build，并使用无原版纹理的空 build。这一接入方式仅完成源码核对与离线资源检查，尚未游戏实测，不作为通用可复制模板；私有属性设置与目标组关系均需版本核对。
+独有动画组可用 `AnimOnly` 引用 `human` build，并保留无原版纹理的空 build；空 build 的 0 符号不会覆盖 human。Better Action Showcase 0.2.6 已在 U59-744825 实机确认这条接入能让动作出现，但不同骨架/组仍需版本核对，幅度和遮挡也要逐版看。
+
+### 自定义复制人 KAnim 的两个静默失败
+
+这两项都不抛异常，`CurrentAnim.name` 还可能正常显示自定义片段：
+
+- **组没有真正注册成 AnimOnly/human。** `KAnimGroupFile.AddGroup` 用 `AnimCommandFile.directory` 判重并决定是否应用 AnimOnly/目标 build，`ModUtil.AddKAnimMod` 却把它留成空串。前面已有空目录动画组时，后来者会静默退回 `RendererType.Default`。给 `commands.directory` 一个独占值，并在 `AddAnimMod` 前设置 `Type=AnimOnly`、`TargetBuild=AnimTargetBuild=SwapTargetBuild="human"`。日志应出现 `render=AnimOnly target=human swap=human animTarget=human`；回归要真实调用 `AddGroup`，且在前置一个空目录组后断言自己的组仍是 AnimOnly/human。
+- **root 指向了不存在的符号。** `ANIM` 的 root 必须是目标 build（human 复制人通常 `snapto_pivot`，哈希 `0x88876e68`）里真实存在且有帧的符号，不能用自定义 build 名/动画名。root 错时帧和名字都能读，`Emote.IsValid` 也可能为真，但身体不绑骨、不播放。解析 `anim.bytes` 核对每个 clip 的 root；运行时再看 `batchGroupID`、`curBuild`、`GetSymbolIndex(root)` 和 `frame.numElements`。`TICK anim=...` 只证明名字，不证明渲染。
 
 进入、循环等待、退出和中断分别管理覆盖。吃饭/求生离场、取消、死亡或拆除后恢复原生动画，避免上一动作与服装覆盖残留。建筑动画与小人动画的接触时序也要在游戏中确认。原版纹理、拆包资产和本机提取目录不放入发布包。
 
@@ -64,7 +71,7 @@ Execution Platform 的 6×5 建筑开发中核对了 U59 的 `BuildingDef.GetVis
 
 普通表情可以用稳定确认和最短显示时间抑制阈值跳变，但要与短动作时长一起检查。Better Action Showcase 的旧实现中，表情等待接近整段动作时长，身体结束后脸才出现；新实现让动作采用选中它的心情，结束后重新读取当前状态。即时采用仍须尊重原版强制表情和外部所有者，不靠提高全局优先级覆盖它们。
 
-近身手势要检查实际符号排序：手贴胸口、肚子或头部时，后景手臂可能被身体完全遮住；通道叫 left/right 不保证它在人物前景。抬臂还要检查两段关节在手靠近肩部时是否退化，轨迹与位移限值按骨架尺度确定，不照抄项目数值。
+近身手势要检查实际符号排序：手贴胸口、肚子或头部时，后景手臂可能被身体完全遮住；通道叫 left/right 不保证它在人物前景。贴身体的动作优先用前景侧，并把接触点放到头部/躯干轮廓外；挥手 mirror 后要把手掌帧给实际抬起的一侧，left/right 的 x 也不对称，逐帧预览确认。抬臂还要检查两段关节在手靠近肩部时是否退化，轨迹与位移限值按骨架尺度确定，不照抄项目数值。Better Action Showcase 0.2.7 的“手悬空”就是后景手臂被头/躯干挡住；0.2.8 改为前景手臂并在离线预览中确认手/臂接上，实机仍待确认。
 
 二阶跟随、呼吸和重心转移可在姿势烘焙阶段写入 KAnim，减少运行时求解；是否适合烘焙取决于动作是否需要实时响应。离线曲线更平滑只证明资源变化，仍需检查服装、太空服、实际播放采样和中断交接。
 

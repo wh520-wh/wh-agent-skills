@@ -26,6 +26,12 @@
 
 **闲置动作创建了却无法接管。** Better Action Showcase 0.2.3 的录屏对应日志反复出现 `Stopping chore IdleChore to start IdleGestureChore ... cancelled the second one`。目标版实际先结束旧任务，再验证候选；旧判定此时仍要求旧 IdleChore 存在。0.2.4 将自己已排队的候选与新建资格分开，并保留交接表情，真实控制器隔离回放由失败转为通过；修复后的游戏播放尚未实测。调用顺序和模型差异见[复制人任务与效果](duplicants-chores-and-effects.md)，不要因此通用放宽所有空任务状态。
 
+**动画组静默降级。** 动画已加载、动作名也出现，身体却播放别的原版动作或不动。`ModUtil.AddKAnimMod` 把 `AnimCommandFile.directory` 留成空串；`KAnimGroupFile.AddGroup` 以前面空目录组判重，后来组静默退回 `RendererType.Default`。给独占 `directory` 并核对组日志，不要只看 DLL 已加载。
+
+**有动画名但身体不动（root 错）。** Better Action Showcase 0.2.5 的日志能出现 `TICK anim=bas_*`，身体仍保持 idle。生成器把 `ANIM` 的 root 写成自定义 build 名 `bas_gestures`，human batch 没有这个符号；帧和名字都能读，`Emote.IsValid` 也可能为真，但骨骼不绑定。改为 human 有效根（如 `snapto_pivot`），核对 root、`GetSymbolIndex` 和帧元素数量，不能在 `TICK` 处收工。
+
+**手悬空（后景手臂遮挡）。** 手出现在脸、胸或肚子上，手臂却不见了。贴身体的动作若用后景侧手臂，会被头/躯干挡住；改用前景侧，并把接触点移到轮廓外。挥手 mirror 后要把手掌帧给实际抬起的一侧；left/right 的 x 方向不对称，逐帧预览确认。
+
 ## 从参考实现学到的提醒
 
 ### 化工业项目的掉落与显示反馈

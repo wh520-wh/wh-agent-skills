@@ -87,6 +87,11 @@
       "focus": "分清疲劳触发与紧迫取消；创建前和实际领取时复核；保留求生抢占，不扩大为美术重做。"
     },
     {
+      "id": "animation-name-but-no-body",
+      "prompt": "日志里能看到 TICK anim=bas_smallwave，动画组也显示加载成功，但复制人身体还是 idle。先查什么？",
+      "focus": "先查组是否 AnimOnly/human（AnimCommandFile.directory）与 clip root 是否 human 有效符号；TICK/Emote.IsValid 不代表身体播放；手贴身体时再查前景手臂遮挡。"
+    },
+    {
       "id": "mood-coherence",
       "prompt": "小人刚吃完饭，在差环境里一边点头打气一边担忧，而且有些表情等动作结束才出现。帮我查清机制。",
       "focus": "核对情境优先级、共享快照与动作候选；比较表情稳定时间和动作时长，保留原版强制表情，不预设唯一根因。"

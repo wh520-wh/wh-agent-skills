@@ -15,6 +15,7 @@ description: 以 Klei《缺氧》开发者视角设计、制作、调试和打�
 - 建筑动态与描述语言也要贴合原版：库存和运行状态应反映在外观上，描述与效果说明采用同类原版的简短口吻。具体见[美术与动画](references/art-and-animation.md)和[建筑与房间](references/buildings-and-rooms.md)。
 - 涉及地面物品或建筑出料时，分别核对物品底面与砖面的接触、实际落点所在格，以及瓶罐、拾取、储存和运输表现。普通落地物不应因锚点错误悬空；出料位置以用户要求和同类原版为准，不凭“旁边”自行推成占地外一格。见[元素与物品](references/elements-and-items.md)和[建筑与房间](references/buildings-and-rooms.md)。
 - 涉及角色或机械动作时，保持进入、循环、分支、退出和中断恢复的连续性，并核对动作、表情、声音与结果提交的衔接。提高帧率不等于流畅；具体提醒见[美术与动画](references/art-and-animation.md)。
+- 自定义复制人 KAnim 先查两处不报错的绑定：组是否真的 `AnimOnly/human`（关键在 `AnimCommandFile.directory`），以及 clip 的 root 是否为 human 有效符号。日志出现 anim 名不代表身体已播放；见[美术与动画](references/art-and-animation.md)和[故障经验](references/failure-lessons.md)。
 - 保留稳定、独有的身份和合理补丁范围，不随意改原版共享资源、全局枚举或全部机器，不增加无必要依赖。
 - 区分事实、推测与通用风险。用户澄清或新证据出现后更新结论；已排除的问题不继续当故障修复。
 - 编译、资源检查和替身测试各有边界。没有运行游戏就直说，不把待验证的行为写成通过。
