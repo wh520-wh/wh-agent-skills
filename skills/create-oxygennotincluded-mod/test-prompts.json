@@ -105,6 +105,26 @@
       "id": "expression-ownership",
       "prompt": "另一个 Mod 自定义了招呼动作，我的心情 Mod 还会给它换脸；减少表情分配后，招呼结束又把常驻脸清掉了。",
       "focus": "同时保留外部动作和表情，核对 FaceGraph 的实例去重/移除；独立清理者不共享同一实例，不全局清空或反射接管私有列表。"
+    },
+    {
+      "id": "idle-handoff-gap",
+      "prompt": "闲置动作几乎不出现，日志提示停止 IdleChore、开始自定义动作时新任务已经失效。创建动作前资格检查是通过的，请先查原因。",
+      "focus": "核对 SetChore/StopChore、清空当前任务、EndChore 与候选 IsValid 的实际顺序；区分新建和已排队自有候选，保留超时和抢占，不把所有 null 当前任务当闲置。"
+    },
+    {
+      "id": "bionic-presentation-eligibility",
+      "prompt": "普通人似乎有动作，仿生人站着时却没有。要不要额外挂个控制器，并要求它所有 Storage 都为空？",
+      "focus": "先核对共享挂载入口和真实闲置；缺失有机需求按不适用处理；区分搬运与电池/增强器/氧气存储，不重复挂载、不清空内置物；资格与模型渲染分别验证。"
+    },
+    {
+      "id": "natural-completion-test-seam",
+      "prompt": "控制器的完成和让位测试全过了，不过用例只 StopChore，再直接 SetChore(工作)。这足够证明动画自然结束和原版会抢占吗？帮我核对并补有用的验证。",
+      "focus": "分别追踪 Succeed/End/onExit/EndChore/Cleanup 与 Cancel；直接指定工作仅证明开始后的清理，另查原生候选比较和优先级；回放生产控制器，不复制逻辑或把 IL 检查说成实机。"
+    },
+    {
+      "id": "installed-versus-built-evidence",
+      "prompt": "我已经编译了修复包，但新录屏还是没动作。能否据此说修复无效并再降低触发门槛？",
+      "focus": "先核对游戏实际加载的安装目录、版本/指纹、配置和对应日志；对齐录屏与模拟时间；静站不代表 IdleChore，新包不等于已部署，不擅自改安装、开关或存档来凑验证。"
     }
   ]
 }

@@ -35,7 +35,7 @@ description: 以 Klei《缺氧》开发者视角设计、制作、调试和打�
 
 - 元素、液气固材料、瓶罐、碎块、食物和物品：[元素与物品](references/elements-and-items.md)。
 - 建筑、发电、加工、管道、房间和调优：[建筑与房间](references/buildings-and-rooms.md)。
-- 指定小人到场、装饰动作、招呼、可中断任务、临时属性与特殊死亡：[复制人任务与效果](references/duplicants-chores-and-effects.md)。
+- 普通/仿生复制人、到场任务、装饰动作与招呼、任务交接与中断、临时效果和特殊死亡：[复制人任务与效果](references/duplicants-chores-and-effects.md)。
 - 建筑侧屏、对象选择、自定义输入和确认按钮：[侧屏交互](references/side-screens.md)。
 - 任务页签、任务行与受阻原因提示类 mod（机制、API、模板与文案修改）：[任务面板与受阻原因](references/chores-panel-and-reasons.md)。
 - 美术、图标、KAnim、角色/机械动作衔接、占地和建造蓝图：[美术与动画](references/art-and-animation.md)。
